@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Predict Price - Car Resale Price Prediction</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="{{ url_for('dashboard') }}" class="nav-brand">
+        <img src="{{ url_for('static', filename='logos/classic_badge.svg') }}" class="nav-brand-img" alt="AutoValuate Logo">
+        <span>Car Price Predictor</span>
+      </a>
+
+      <nav>
+        <ul class="nav-links">
+          <li><a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a></li>
+          <li><a href="{{ url_for('predict_page') }}" class="nav-link active">Predict Price</a></li>
+          <li><a href="{{ url_for('logout') }}" class="nav-logout">Logout</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <h1 class="page-title">Predict Car Resale Value</h1>
+    <p class="page-subtitle">
+      Enter car specifications to get price predictions from Linear Regression, Decision Tree, and Random Forest models.
+    </p>
+
+    <div class="card">
+      <div class="card-title">Car Specifications</div>
+
+      <form id="carForm">
+        <div class="form-grid">
+
+          <div class="form-group full">
+            <label for="manufacturer">Manufacturer / Brand</label>
+            <select id="manufacturer" required>
+              <option value="" disabled selected>Select Brand</option>
+              {% for maker in manufacturers %}
+              <option value="{{ maker }}">{{ maker }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="year">Year of Manufacture</label>
+            <input type="number" id="year" min="1992" max="2026" placeholder="e.g. 2017" required />
+          </div>
+
+          <div class="form-group">
+            <label for="km_driven">Kilometers Driven</label>
+            <input type="number" id="km_driven" min="100" max="800000" placeholder="e.g. 50000" required />
+          </div>
+
+          <div class="form-group">
+            <label for="fuel">Fuel Type</label>
+            <select id="fuel" required>
+              <option value="Petrol" selected>Petrol</option>
+              <option value="Diesel">Diesel</option>
+              <option value="CNG">CNG</option>
+              <option value="LPG">LPG</option>
+              <option value="Electric">Electric</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="transmission">Transmission</label>
+            <select id="transmission" required>
+              <option value="Manual" selected>Manual</option>
+              <option value="Automatic">Automatic</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="seller_type">Seller Type</label>
+            <select id="seller_type" required>
+              <option value="Individual" selected>Individual</option>
+              <option value="Dealer">Dealer</option>
+              <option value="Trustmark Dealer">Trustmark Dealer</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="owner">Owner History</label>
+            <select id="owner" required>
+              <option value="First Owner" selected>First Owner</option>
+              <option value="Second Owner">Second Owner</option>
+              <option value="Third Owner">Third Owner</option>
+              <option value="Fourth & Above Owner">Fourth &amp; Above Owner</option>
+              <option value="Test Drive Car">Test Drive Car</option>
+            </select>
+          </div>
+
+        </div>
+
+        <button type="submit" class="btn-primary" id="submitBtn">
+          Predict Resale Price
+        </button>
+      </form>
+
+      <!-- Prediction Results Box -->
+      <div class="results-box" id="resultsBox">
+        <div style="font-weight: 600; font-size: 1rem; color: #111827;">
+          Prediction Results
+        </div>
+        <div style="font-size: 0.85rem; color: #6b7280; margin-top: 2px;">
+          Comparing predictions from all 3 regression models:
+        </div>
+
+        <div class="results-grid">
+
+          <!-- 1. Linear Regression -->
+          <div class="result-card">
+            <div class="result-model-name">Linear Regression</div>
+            <div class="result-price" id="lrResult">&#8377; --</div>
+            <div class="result-raw" id="lrRaw">Accuracy: 57.7%</div>
+          </div>
+
+          <!-- 2. Decision Tree Regressor -->
+          <div class="result-card">
+            <div class="result-model-name">Decision Tree Regressor</div>
+            <div class="result-price" id="dtResult">&#8377; --</div>
+            <div class="result-raw" id="dtRaw">Accuracy: 67.7%</div>
+          </div>
+
+          <!-- 3. Random Forest Regressor -->
+          <div class="result-card highlight">
+            <div class="result-model-name" style="color: #15803d;">
+              Random Forest Regressor &bull; Best
+            </div>
+            <div class="result-price" id="rfResult" style="color: #15803d;">&#8377; --</div>
+            <div class="result-raw" id="rfRaw">Accuracy: 71.6%</div>
+          </div>
+
+        </div>
+
+        <div style="margin-top: 14px; padding: 10px 14px; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 0.85rem; color: #4b5563;" id="conclusionText">
+          Random Forest Regressor provides the most reliable prediction because it combines 100 decision trees to reduce variance.
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <footer>
+    Car Resale Price Prediction &bull; Linear Regression, Decision Tree, Random Forest
+  </footer>
+
+  <script>
+    const form = document.getElementById('carForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const resultsBox = document.getElementById('resultsBox');
+
+    function formatLakh(amount) {
+      if (amount >= 100000) {
+        return '₹ ' + (amount / 100000).toFixed(2) + ' Lakh';
+      }
+      return '₹ ' + Math.round(amount).toLocaleString('en-IN');
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Calculating Predictions...';
+
+      const payload = {
+        manufacturer: document.getElementById('manufacturer').value,
+        year: parseInt(document.getElementById('year').value),
+        km_driven: parseFloat(document.getElementById('km_driven').value),
+        fuel: document.getElementById('fuel').value,
+        transmission: document.getElementById('transmission').value,
+        seller_type: document.getElementById('seller_type').value,
+        owner: document.getElementById('owner').value
+      };
+
+      try {
+        const response = await fetch('/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+        if (data.error) throw new Error(data.error);
+
+        // Update results
+        const lrVal = data.linear_regression;
+        const dtVal = data.decision_tree_regressor;
+        const rfVal = data.random_forest_regressor;
+
+        document.getElementById('lrResult').textContent = formatLakh(lrVal);
+        document.getElementById('lrRaw').textContent = 'Exact: ₹ ' + Math.round(lrVal).toLocaleString('en-IN');
+
+        document.getElementById('dtResult').textContent = formatLakh(dtVal);
+        document.getElementById('dtRaw').textContent = 'Exact: ₹ ' + Math.round(dtVal).toLocaleString('en-IN');
+
+        document.getElementById('rfResult').textContent = formatLakh(rfVal);
+        document.getElementById('rfRaw').textContent = 'Exact: ₹ ' + Math.round(rfVal).toLocaleString('en-IN');
+
+        resultsBox.style.display = 'block';
+
+      } catch (err) {
+        alert('Error: ' + err.message);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Predict Resale Price';
+      }
+    });
+
+    // Auto-fill from URL if user clicked "Predict for this car" on Dashboard
+    window.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      if (params.has('manufacturer')) {
+        document.getElementById('manufacturer').value = params.get('manufacturer');
+        if (params.has('year')) document.getElementById('year').value = params.get('year');
+        if (params.has('km')) document.getElementById('km_driven').value = params.get('km');
+        if (params.has('fuel')) document.getElementById('fuel').value = params.get('fuel');
+        if (params.has('transmission')) document.getElementById('transmission').value = params.get('transmission');
+        if (params.has('seller')) document.getElementById('seller_type').value = params.get('seller');
+        if (params.has('owner')) document.getElementById('owner').value = params.get('owner');
+
+        form.dispatchEvent(new Event('submit'));
+      }
+    });
+  </script>
+
+</body>
+</html>

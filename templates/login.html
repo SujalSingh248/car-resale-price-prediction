@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login - Car Resale Price Prediction</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+  <div class="login-wrap">
+    <div class="login-card">
+      <img src="{{ url_for('static', filename='logos/classic_badge.svg') }}" class="login-badge" alt="App Logo">
+      <h2 style="font-size: 1.3rem; font-weight: 700; color: #111827; margin-bottom: 4px;">
+        Car Resale Price Prediction
+      </h2>
+      <p style="font-size: 0.88rem; color: #6b7280; margin-bottom: 20px;">
+        Machine Learning Project &bull; Login
+      </p>
+
+      {% if error %}
+      <div style="background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; padding: 8px 12px; border-radius: 6px; font-size: 0.82rem; margin-bottom: 16px;">
+        {{ error }}
+      </div>
+      {% endif %}
+
+      <form method="POST" action="{{ url_for('login') }}" style="text-align: left;">
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label for="username">Username or Email</label>
+          <input 
+            type="text" 
+            id="username" 
+            name="username" 
+            placeholder="e.g. teacher@college.edu" 
+            required 
+            value="{{ request.form.get('username', '') }}"
+          />
+        </div>
+
+        <div class="form-group" style="margin-bottom: 18px;">
+          <label for="password">Password</label>
+          <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            placeholder="Enter password" 
+            required
+          />
+        </div>
+
+        <button type="submit" class="btn-primary">
+          Login
+        </button>
+
+        <button type="button" class="btn-secondary" style="width: 100%;" onclick="fillDemo()">
+          Fill Demo Credentials
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function fillDemo() {
+      document.getElementById('username').value = 'teacher@college.edu';
+      document.getElementById('password').value = 'admin123';
+    }
+  </script>
+
+</body>
+</html>

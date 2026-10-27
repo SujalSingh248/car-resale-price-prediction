@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200" width="100%" height="100%">
+  <rect width="100%" height="100%" fill="#ffffff"/>
+  <g transform="translate(60, 15) scale(0.9)">
+    <!-- Honda classic trapezoid badge with H -->
+    <path d="M 25,20 C 12,20 5,28 8,45 L 28,145 C 31,160 40,168 55,168 L 145,168 C 160,168 169,160 172,145 L 192,45 C 195,28 188,20 175,20 Z" fill="none" stroke="#2563eb" stroke-width="8"/>
+    <path d="M 52,40 L 68,148 L 84,148 L 88,102 C 88,96 92,92 100,92 C 108,92 112,96 112,102 L 116,148 L 132,148 L 148,40 L 130,40 L 122,86 C 120,90 115,92 108,92 L 92,92 C 85,92 80,90 78,86 L 70,40 Z" fill="#2563eb"/>
+    <text x="100" y="195" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="800" letter-spacing="5" fill="#1f2937" text-anchor="middle">HONDA</text>
+  </g>
+</svg>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200" width="100%" height="100%">
+  <rect width="100%" height="100%" fill="#ffffff"/>
+  <g transform="translate(50, 20) scale(0.9)">
+    <!-- Hyundai classic oval ring -->
+    <ellipse cx="110" cy="85" rx="100" ry="60" fill="none" stroke="#002c5f" stroke-width="9"/>
+    <!-- Slanted italic H -->
+    <path d="M 52,122 C 55,108 65,72 75,50 C 78,45 84,45 88,46 L 98,48 C 94,56 86,76 80,94 L 125,78 C 129,72 135,56 142,42 C 145,38 152,38 156,40 L 165,42 C 158,58 145,95 138,125 C 135,129 130,130 125,128 L 115,126 C 118,118 124,100 128,88 L 85,104 C 82,109 76,124 70,136 C 68,140 60,140 56,138 Z" fill="#002c5f"/>
+    <text x="110" y="185" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="800" letter-spacing="4" fill="#1f2937" text-anchor="middle">HYUNDAI</text>
+  </g>
+</svg>

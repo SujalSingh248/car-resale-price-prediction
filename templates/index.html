@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🚗 Car Resale Price Predictor</title>
+  <style>
+    /* ── Reset & base ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 16px;
+      color: #e0e6f0;
+    }
+
+    /* ── Header ───────────────────────────────────────────────── */
+    header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    header h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #e0e6f0;
+    }
+    header h1 span { color: #4db8ff; }
+    header p {
+      margin-top: 6px;
+      font-size: 1rem;
+      color: #8fa3bf;
+    }
+
+    /* ── Card ─────────────────────────────────────────────────── */
+    .card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 32px 36px;
+      width: 100%;
+      max-width: 680px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+
+    /* ── Form grid ────────────────────────────────────────────── */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px 24px;
+    }
+    @media (max-width: 520px) { .form-grid { grid-template-columns: 1fr; } }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field.full { grid-column: 1 / -1; }
+
+    label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #8fa3bf;
+    }
+
+    input, select {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: #e0e6f0;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    input:focus, select:focus {
+      border-color: #4db8ff;
+      box-shadow: 0 0 0 3px rgba(77,184,255,0.15);
+    }
+    select option { background: #16213e; }
+
+    /* ── Button ───────────────────────────────────────────────── */
+    .btn-predict {
+      margin-top: 24px;
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(90deg, #4db8ff, #1a78c2);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    .btn-predict:hover  { opacity: 0.9; }
+    .btn-predict:active { transform: scale(0.98); }
+    .btn-predict:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ── Results ──────────────────────────────────────────────── */
+    #results {
+      margin-top: 28px;
+      display: none;
+    }
+    #results h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #8fa3bf;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .model-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 560px) { .model-cards { grid-template-columns: 1fr; } }
+
+    .model-card {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      padding: 20px 14px;
+      text-align: center;
+      transition: transform 0.2s;
+    }
+    .model-card:hover { transform: translateY(-3px); }
+    .model-card .icon { font-size: 1.8rem; margin-bottom: 8px; }
+    .model-card .model-name {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #8fa3bf;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 10px;
+    }
+    .model-card .price {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #4db8ff;
+    }
+    .model-card .currency {
+      font-size: 0.85rem;
+      color: #8fa3bf;
+      margin-top: 4px;
+    }
+
+    .model-card.best {
+      border-color: #27ae60;
+      background: rgba(39,174,96,0.12);
+    }
+    .model-card.best .price { color: #2ecc71; }
+    .best-badge {
+      display: inline-block;
+      background: #27ae60;
+      color: #fff;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 20px;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ── Error ────────────────────────────────────────────────── */
+    .error-box {
+      background: rgba(231,76,60,0.15);
+      border: 1px solid rgba(231,76,60,0.4);
+      border-radius: 10px;
+      padding: 14px 18px;
+      color: #e74c3c;
+      font-size: 0.9rem;
+      margin-top: 16px;
+      display: none;
+    }
+
+    /* ── Spinner ──────────────────────────────────────────────── */
+    .spinner {
+      display: inline-block;
+      width: 18px; height: 18px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    footer {
+      margin-top: 36px;
+      font-size: 0.78rem;
+      color: #4a6070;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🚗 Car Resale <span>Price Predictor</span></h1>
+  <p>Compare predictions from Linear Regression, Random Forest &amp; Decision Tree</p>
+</header>
+
+<div class="card">
+  <form id="predictForm">
+    <div class="form-grid">
+
+      <div class="field">
+        <label>Manufacturer</label>
+        <input type="text" id="manufacturer" placeholder="e.g. Maruti, Honda" required />
+      </div>
+
+      <div class="field">
+        <label>Year of Manufacture</label>
+        <input type="number" id="year" min="1990" max="2024" placeholder="e.g. 2018" required />
+      </div>
+
+      <div class="field">
+        <label>Kilometres Driven</label>
+        <input type="number" id="km_driven" min="0" placeholder="e.g. 45000" required />
+      </div>
+
+      <div class="field">
+        <label>Fuel Type</label>
+        <select id="fuel">
+          <option value="Petrol">Petrol</option>
+          <option value="Diesel">Diesel</option>
+          <option value="CNG">CNG</option>
+          <option value="LPG">LPG</option>
+          <option value="Electric">Electric</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Seller Type</label>
+        <select id="seller_type">
+          <option value="Individual">Individual</option>
+          <option value="Dealer">Dealer</option>
+          <option value="Trustmark Dealer">Trustmark Dealer</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Transmission</label>
+        <select id="transmission">
+          <option value="Manual">Manual</option>
+          <option value="Automatic">Automatic</option>
+        </select>
+      </div>
+
+      <div class="field full">
+        <label>Owner Type</label>
+        <select id="owner">
+          <option value="First Owner">First Owner</option>
+          <option value="Second Owner">Second Owner</option>
+          <option value="Third Owner">Third Owner</option>
+          <option value="Fourth & Above Owner">Fourth &amp; Above Owner</option>
+          <option value="Test Drive Car">Test Drive Car</option>
+        </select>
+      </div>
+
+    </div><!-- /form-grid -->
+
+    <button class="btn-predict" type="submit" id="predictBtn">
+      Predict Resale Price
+    </button>
+  </form>
+
+  <div class="error-box" id="errorBox"></div>
+
+  <div id="results">
+    <h2>📊 Predicted Resale Prices</h2>
+    <div class="model-cards" id="modelCards"></div>
+  </div>
+</div>
+
+<footer>Car Resale Price Predictor &nbsp;|&nbsp; ML Demo &nbsp;|&nbsp; Prices in ₹</footer>
+
+<script>
+  const form       = document.getElementById('predictForm');
+  const btn        = document.getElementById('predictBtn');
+  const resultsDiv = document.getElementById('results');
+  const cardsDiv   = document.getElementById('modelCards');
+  const errorBox   = document.getElementById('errorBox');
+
+  const MODEL_META = {
+    linear_regression:       { label: "Linear Regression",       icon: "📈" },
+    random_forest_regressor: { label: "Random Forest Regressor", icon: "🌲" },
+    decision_tree_regressor: { label: "Decision Tree Regressor", icon: "🌿" },
+  };
+
+  function formatINR(val) {
+    if (val >= 1e7)   return (val / 1e7).toFixed(2) + " Cr";
+    if (val >= 1e5)   return (val / 1e5).toFixed(2) + " Lakh";
+    if (val >= 1000)  return (val / 1000).toFixed(1) + " K";
+    return val.toFixed(0);
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorBox.style.display = 'none';
+    resultsDiv.style.display = 'none';
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Predicting…';
+
+    const payload = {
+      manufacturer: document.getElementById('manufacturer').value,
+      year:         document.getElementById('year').value,
+      km_driven:    document.getElementById('km_driven').value,
+      fuel:         document.getElementById('fuel').value,
+      seller_type:  document.getElementById('seller_type').value,
+      transmission: document.getElementById('transmission').value,
+      owner:        document.getElementById('owner').value,
+    };
+
+    try {
+      const res  = await fetch('/predict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+
+      if (data.error) throw new Error(data.error);
+
+      // Find best prediction (highest value = RF usually)
+      const bestKey = Object.keys(data).reduce((a, b) => data[a] > data[b] ? a : b);
+
+      cardsDiv.innerHTML = '';
+      for (const [key, value] of Object.entries(data)) {
+        const meta    = MODEL_META[key] || { label: key, icon: '🤖' };
+        const isBest  = key === bestKey;
+        const card    = document.createElement('div');
+        card.className = 'model-card' + (isBest ? ' best' : '');
+        card.innerHTML = `
+          <div class="icon">${meta.icon}</div>
+          ${isBest ? '<span class="best-badge">Best Estimate</span>' : ''}
+          <div class="model-name">${meta.label}</div>
+          <div class="price">₹ ${formatINR(value)}</div>
+          <div class="currency">(₹ ${value.toLocaleString('en-IN')})</div>
+        `;
+        cardsDiv.appendChild(card);
+      }
+
+      resultsDiv.style.display = 'block';
+
+    } catch (err) {
+      errorBox.textContent = '⚠️ ' + err.message;
+      errorBox.style.display = 'block';
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = 'Predict Resale Price';
+    }
+  });
+</script>
+</body>
+</html>
