@@ -40,9 +40,9 @@
         <div class="form-grid">
 
           <div class="form-group full">
-            <label for="manufacturer">Manufacturer / Brand</label>
+            <label for="manufacturer">Manufacturer / Brand <span style="font-weight: normal; color: #6b7280; font-size: 0.8rem;">(Trained on 29 Brands from Dataset)</span></label>
             <select id="manufacturer" required>
-              <option value="" disabled selected>Select Brand</option>
+              <option value="" disabled selected>Select Brand from Dataset</option>
               {% for maker in manufacturers %}
               <option value="{{ maker }}">{{ maker }}</option>
               {% endfor %}

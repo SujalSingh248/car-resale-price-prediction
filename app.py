@@ -40,14 +40,15 @@ except FileNotFoundError as e:
     print(f"⚠️ Model file missing: {e}. Run train_model.py first.")
     lr_model = rf_model = dt_model = scaler = columns = None
 
-# Verified manufacturers list from dataset
-MANUFACTURERS = [
-    "Ambassador", "Audi", "BMW", "Chevrolet", "Daewoo", "Datsun", "Fiat",
-    "Force", "Ford", "Honda", "Hyundai", "Isuzu", "Jaguar", "Jeep",
-    "Kia", "Land", "MG", "Mahindra", "Maruti", "Mercedes-Benz",
-    "Mitsubishi", "Nissan", "OpelCorsa", "Renault", "Skoda", "Tata",
-    "Toyota", "Volkswagen", "Volvo"
-]
+# Load exact manufacturer list directly from the training dataset
+DATA_FILE = os.path.join(os.path.dirname(__file__), "data", "dataset.csv")
+try:
+    _df_dataset = pd.read_csv(DATA_FILE)
+    MANUFACTURERS = sorted(_df_dataset["name"].str.split(" ").str[0].dropna().unique().tolist())
+    print(f"✅ Loaded {len(MANUFACTURERS)} manufacturers directly from dataset.csv")
+except Exception as e:
+    print(f"⚠️ Could not read dataset.csv ({e}), falling back to trained columns.")
+    MANUFACTURERS = sorted([c.replace("manufacturer_", "") for c in columns if c.startswith("manufacturer_")])
 
 
 def build_input_df(form_data: dict) -> pd.DataFrame:

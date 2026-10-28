@@ -68,16 +68,16 @@
       </table>
     </div>
 
-    <!-- Card 2: Classic Manufacturer Models Showcase -->
+    <!-- Card 2: Exact Vehicles Directly from Dataset -->
     <div class="card">
-      <div class="card-title">2. Popular Vehicles by Brand</div>
+      <div class="card-title">2. Sample Vehicles Directly from Training Dataset</div>
       <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 16px;">
-        Click "Predict for this car" to automatically load its specifications into the prediction page.
+        These are real transactions from <code>dataset.csv</code>. Click <strong>"Predict for this car"</strong> to test how closely the 3 models predict its actual selling price.
       </p>
 
       <div class="cars-grid">
 
-        <!-- Car 1: Maruti Suzuki Swift -->
+        <!-- Car 1: Maruti Suzuki Swift Dzire VDI -->
         <div class="car-box">
           <div class="car-logo-wrapper">
             <img 
@@ -86,14 +86,14 @@
             />
           </div>
           <div class="car-info">
-            <div class="car-name">Maruti Swift Dzire</div>
+            <div class="car-name">Maruti Swift Dzire VDI</div>
             <div class="car-details">
-              Year: 2017 &bull; Diesel<br>
-              Manual &bull; 65,000 km<br>
-              First Owner
+              Year: 2014 &bull; Diesel &bull; Manual<br>
+              79,350 km &bull; Second Owner<br>
+              <strong>Dataset Price: ₹ 4.34 Lakh</strong>
             </div>
             <a 
-              href="{{ url_for('predict_page', manufacturer='Maruti', year=2017, km=65000, fuel='Diesel', transmission='Manual', owner='First Owner', seller='Individual') }}" 
+              href="{{ url_for('predict_page', manufacturer='Maruti', year=2014, km=79350, fuel='Diesel', transmission='Manual', owner='Second Owner', seller='Individual') }}" 
               class="btn-select"
             >
               Predict for this car
@@ -101,7 +101,7 @@
           </div>
         </div>
 
-        <!-- Car 2: Honda City -->
+        <!-- Car 2: Honda City V MT -->
         <div class="car-box">
           <div class="car-logo-wrapper">
             <img 
@@ -110,14 +110,14 @@
             />
           </div>
           <div class="car-info">
-            <div class="car-name">Honda City 1.5</div>
+            <div class="car-name">Honda City V MT</div>
             <div class="car-details">
-              Year: 2018 &bull; Petrol<br>
-              Manual &bull; 42,000 km<br>
-              First Owner
+              Year: 2018 &bull; Petrol &bull; Manual<br>
+              14,500 km &bull; First Owner<br>
+              <strong>Dataset Price: ₹ 9.30 Lakh</strong>
             </div>
             <a 
-              href="{{ url_for('predict_page', manufacturer='Honda', year=2018, km=42000, fuel='Petrol', transmission='Manual', owner='First Owner', seller='Individual') }}" 
+              href="{{ url_for('predict_page', manufacturer='Honda', year=2018, km=14500, fuel='Petrol', transmission='Manual', owner='First Owner', seller='Individual') }}" 
               class="btn-select"
             >
               Predict for this car
@@ -125,7 +125,7 @@
           </div>
         </div>
 
-        <!-- Car 3: Hyundai Creta -->
+        <!-- Car 3: Hyundai Creta 1.6 VTVT S -->
         <div class="car-box">
           <div class="car-logo-wrapper">
             <img 
@@ -134,14 +134,14 @@
             />
           </div>
           <div class="car-info">
-            <div class="car-name">Hyundai Creta 1.6</div>
+            <div class="car-name">Hyundai Creta 1.6 VTVT S</div>
             <div class="car-details">
-              Year: 2019 &bull; Diesel<br>
-              Automatic &bull; 38,000 km<br>
-              First Owner
+              Year: 2015 &bull; Petrol &bull; Manual<br>
+              25,000 km &bull; First Owner<br>
+              <strong>Dataset Price: ₹ 8.50 Lakh</strong>
             </div>
             <a 
-              href="{{ url_for('predict_page', manufacturer='Hyundai', year=2019, km=38000, fuel='Diesel', transmission='Automatic', owner='First Owner', seller='Dealer') }}" 
+              href="{{ url_for('predict_page', manufacturer='Hyundai', year=2015, km=25000, fuel='Petrol', transmission='Manual', owner='First Owner', seller='Individual') }}" 
               class="btn-select"
             >
               Predict for this car
@@ -149,7 +149,7 @@
           </div>
         </div>
 
-        <!-- Car 4: Toyota Innova -->
+        <!-- Car 4: Toyota Innova 2.5 G -->
         <div class="car-box">
           <div class="car-logo-wrapper">
             <img 
@@ -158,14 +158,14 @@
             />
           </div>
           <div class="car-info">
-            <div class="car-name">Toyota Innova 2.5</div>
+            <div class="car-name">Toyota Innova 2.5 G 7-Seater</div>
             <div class="car-details">
-              Year: 2016 &bull; Diesel<br>
-              Manual &bull; 95,000 km<br>
-              Second Owner
+              Year: 2015 &bull; Diesel &bull; Manual<br>
+              80,000 km &bull; First Owner<br>
+              <strong>Dataset Price: ₹ 13.00 Lakh</strong>
             </div>
             <a 
-              href="{{ url_for('predict_page', manufacturer='Toyota', year=2016, km=95000, fuel='Diesel', transmission='Manual', owner='Second Owner', seller='Individual') }}" 
+              href="{{ url_for('predict_page', manufacturer='Toyota', year=2015, km=80000, fuel='Diesel', transmission='Manual', owner='First Owner', seller='Individual') }}" 
               class="btn-select"
             >
               Predict for this car
